@@ -1683,13 +1683,33 @@ with tab_portefeuille:
         crypto_significant, crypto_small = split_significant_positions(crypto_show, "value_live")
 
         # Bandeau NOCK : valorisation théorique d’un bag de 4,5 M de tokens
-        # au prix live NOCK en USD (mêmes sources / fallbacks que le dashboard).
+        # au prix live NOCK en USD (mêmes sources / fallbacks que le dashboard),
+        # comparée au total actuel du portefeuille (cash + positions en cours).
         nock_bag_qty = 4_500_000
         nock_live_price = fetch_project_live_price("NOCK", "usd")
         nock_bag_value = (nock_bag_qty * nock_live_price) if is_number(nock_live_price) else None
         nock_bag_value_display = (
             f"{float(nock_bag_value):,.0f} $" if is_number(nock_bag_value) else "—"
         )
+
+        if is_number(nock_bag_value):
+            nock_vs_current_diff = float(nock_bag_value) - float(total_current_value)
+            nock_vs_current_diff_abs_display = f"{abs(nock_vs_current_diff):,.0f} $"
+            if nock_vs_current_diff > 0:
+                nock_vs_current_label = "de plus"
+                nock_vs_current_color = "#39ff8f"
+            elif nock_vs_current_diff < 0:
+                nock_vs_current_label = "de moins"
+                nock_vs_current_color = "#ff4d4d"
+            else:
+                nock_vs_current_label = "d'écart"
+                nock_vs_current_color = "#e8e8e8"
+            nock_vs_current_html = (
+                f' → soit <span style="color:{nock_vs_current_color}; font-weight:700;">'
+                f'{nock_vs_current_diff_abs_display} {nock_vs_current_label}</span>'
+            )
+        else:
+            nock_vs_current_html = ""
 
         st.markdown(
             f"""
@@ -1698,7 +1718,7 @@ with tab_portefeuille:
                 padding: 10px 14px;
                 background: #050805;
                 border: 1px solid #1a2e22;
-                border-left: 3px solid #39ff8f;
+                border-left: 3px solid #5a6f62;
                 border-radius: 0;
                 color: #e8e8e8;
                 font-size: 0.78rem;
@@ -1706,7 +1726,8 @@ with tab_portefeuille:
                 font-family: 'JetBrains Mono', monospace;
             ">
                 Avec mon bag de NOCK de 4.5M tokens, j'aurais actuellement
-                <span style="color:#39ff8f; font-weight:700;">{nock_bag_value_display}</span>
+                <span style="color:#e8e8e8; font-weight:700;">{nock_bag_value_display}</span>
+                {nock_vs_current_html}
             </div>
             """,
             unsafe_allow_html=True,
