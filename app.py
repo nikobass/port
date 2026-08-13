@@ -1729,7 +1729,7 @@ with tab_portefeuille:
                 line-height: 1.45;
                 font-family: 'JetBrains Mono', monospace;
             ">
-                Avec mon bag de NOCK de 4.5M tokens, j'aurais actuellement
+                Si j'avais hold mon bag de NOCK de 4.5M tokens, j'aurais actuellement
                 <span style="color:#e8e8e8; font-weight:700;">{nock_bag_value_display}</span>
                 {nock_vs_current_html}
             </div>
