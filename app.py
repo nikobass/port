@@ -1259,7 +1259,7 @@ def montant_investi_affichage(row: pd.Series, transactions: pd.DataFrame) -> flo
 # ---------------------------
 # App
 # ---------------------------
-st.set_page_config(page_title="Dashboard Perso", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Dashboard BW", page_icon="📈", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
 with st.sidebar:
@@ -1530,6 +1530,10 @@ font-weight:400;
 </div>
 """,
     unsafe_allow_html=True,
+)
+
+tab_portefeuille, tab_sales, tab_watchlist = st.tabs(
+    ["Portfolio", "Ventes réalisées", "Watchlist"]
 )
 
 positions_all = positions_live.copy()
@@ -2454,88 +2458,7 @@ Un cycle = un trade complet sur un token.
 
 
 # ---------------------------
-# TAB 3 — Simulateur
-# ---------------------------
-with tab_simulateur:
-    # Purement UX : ne touche jamais aux données réelles (CSV / positions).
-    # Recalcule juste, en direct, ce que donnerait un prix différent du prix live.
-    st.subheader("🧮 Simulateur — et si le prix bougeait ?")
-
-    sim_candidates = positions_live.dropna(subset=["price_live", "qty_current"]).copy()
-    if sim_candidates.empty:
-        st.info("Aucune position pour simuler.")
-    else:
-        sim_col1, sim_col2 = st.columns([1, 2])
-        with sim_col1:
-            sim_token = st.selectbox(
-                "Position",
-                options=sim_candidates["project"].tolist(),
-                key="sim_token",
-            )
-        sim_row = sim_candidates[sim_candidates["project"] == sim_token].iloc[0]
-        with sim_col2:
-            sim_pct = st.slider(
-                "Variation de prix simulée",
-                min_value=-90,
-                max_value=300,
-                value=0,
-                step=1,
-                format="%d%%",
-                key="sim_pct",
-            )
-
-        sim_price = float(sim_row["price_live"]) * (1 + sim_pct / 100)
-        sim_value = float(sim_row["qty_current"]) * sim_price
-        mise_restante = float(sim_row["mise_tokens_restants"]) if is_number(sim_row["mise_tokens_restants"]) else 0.0
-        sim_gain_en_cours = sim_value - mise_restante
-        sim_realized = float(sim_row["realized_pnl"]) if is_number(sim_row["realized_pnl"]) else 0.0
-        sim_profit_global = sim_realized + sim_gain_en_cours
-        sim_buy_cost = float(sim_row["buy_cost_gross"]) if is_number(sim_row["buy_cost_gross"]) else 0.0
-        sim_roi = (sim_profit_global / sim_buy_cost * 100) if sim_buy_cost > 0 else None
-
-        st.markdown(
-            f"""
-            <div style="
-                background:#050805;
-                border:1px solid #1a2e22;
-                border-radius:0;
-                padding:16px 18px;
-                margin-top:10px;
-                max-width:640px;
-            ">
-                <div style="font-size:10.5px; letter-spacing:0.04em; text-transform:uppercase; color:#5a6f62; margin-bottom:12px;">
-                    Simulation — {sim_token} à {sim_pct:+d}% du prix actuel
-                </div>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px 16px;">
-                    <div class="tile-field">
-                        <span class="tile-label">Prix simulé</span>
-                        <span class="tile-value" style="font-size:0.95rem;">{price(sim_price)}</span>
-                    </div>
-                    <div class="tile-field">
-                        <span class="tile-label">Valeur simulée</span>
-                        <span class="tile-value" style="font-size:0.95rem;">{money(sim_value)}</span>
-                    </div>
-                    <div class="tile-field">
-                        <span class="tile-label">Gain position (simulé)</span>
-                        <span class="tile-value" style="font-size:0.95rem;">{pnl_color_html(sim_gain_en_cours)}</span>
-                    </div>
-                    <div class="tile-field">
-                        <span class="tile-label">Profit global (simulé)</span>
-                        <span class="tile-value" style="font-size:0.95rem;">{pnl_color_html(sim_profit_global)}</span>
-                    </div>
-                    <div class="tile-field">
-                        <span class="tile-label">ROI global (simulé)</span>
-                        <span class="tile-value" style="font-size:0.95rem;">{pct_color_html(sim_roi) if sim_roi is not None else "—"}</span>
-                    </div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-
-# ---------------------------
-# TAB 4 — Watchlist
+# TAB 3 — Watchlist
 # ---------------------------
 with tab_watchlist:
     if watchlist_df.empty:
