@@ -1377,7 +1377,7 @@ positions_ratio_display = int(round(float(portfolio_mode["positions_pct"])))
 # ---------------------------
 cards = [
     {
-        "label": "Profit net total actuel → si on vendait tout now",
+        "label": "Profit net total actuel → si je vendais tout now",
         "value": money(pnl_total_real),
         "value_color": pnl_color,
         "detail_html": f"""
