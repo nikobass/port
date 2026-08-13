@@ -1823,29 +1823,33 @@ with tab_portefeuille:
                 pie_df = pie_df.sort_values("value_live", ascending=False)
                 total_value = float(pie_df["value_live"].sum())
 
-                # Palette restreinte terminal, cohérente entre le donut et les
-                # barres ASCII : bleu pour le cash, dégradés de vert/rouge selon
-                # le signe du gain pour la crypto (au lieu du rainbow par token).
-                blue_shades = ["#4dc9ff", "#2f8fc7", "#1c6690"]
-                green_shades = ["#39ff8f", "#2bd97a", "#1f6b45", "#17502f"]
-                red_shades = ["#ff4d4d", "#d93a3a", "#a32d2d", "#791f1f"]
-                gray_shades = ["#5a6f62", "#3f4f46"]
-                counters = {"blue": 0, "green": 0, "red": 0, "gray": 0}
+                # Répartition pure : la couleur sert uniquement à distinguer les bags.
+                # Aucun vert / rouge ici : le donut ne représente ni profit ni perte.
+                # Palette froide / neutre, avec une couleur différente par crypto et
+                # une teinte grise dédiée au cash.
+                crypto_distribution_palette = [
+                    "#4dc9ff",  # cyan / bleu clair
+                    "#b38cff",  # violet
+                    "#e8c547",  # jaune doux
+                    "#7aa2b8",  # bleu-gris
+                    "#d9a6ff",  # mauve clair
+                    "#79b8ff",  # bleu
+                    "#c4a7e7",  # lavande
+                    "#9ca3af",  # gris clair
+                ]
+                cash_distribution_color = "#3f4f46"
+
                 repartition_color_map: Dict[str, str] = {}
+                crypto_color_idx = 0
                 for _, row in pie_df.iterrows():
                     proj = str(row["project"])
                     if proj in cash_assets:
-                        shades, key = blue_shades, "blue"
+                        repartition_color_map[proj] = cash_distribution_color
                     else:
-                        gain_val = row.get("gain_position_en_cours_$")
-                        if pd.notna(gain_val) and float(gain_val) < 0:
-                            shades, key = red_shades, "red"
-                        elif pd.notna(gain_val) and float(gain_val) > 0:
-                            shades, key = green_shades, "green"
-                        else:
-                            shades, key = gray_shades, "gray"
-                    repartition_color_map[proj] = shades[counters[key] % len(shades)]
-                    counters[key] += 1
+                        repartition_color_map[proj] = crypto_distribution_palette[
+                            crypto_color_idx % len(crypto_distribution_palette)
+                        ]
+                        crypto_color_idx += 1
 
                 donut_col, ascii_col = st.columns(2, gap="small")
 
