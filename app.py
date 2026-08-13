@@ -1259,7 +1259,7 @@ def montant_investi_affichage(row: pd.Series, transactions: pd.DataFrame) -> flo
 # ---------------------------
 # App
 # ---------------------------
-st.set_page_config(page_title="Dashboard BW", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Dashboard Perso", page_icon="📈", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
 with st.sidebar:
