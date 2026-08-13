@@ -1406,7 +1406,7 @@ cards = [
         "detail_html": "",
     },
     {
-        "label": "Cash disponible → rakbank + stablecoins",
+        "label": "Cash disponible → stablecoins",
         "value": money_rounded(cash_total),
         "value_color": "#e8e8e8",
         "detail_html": "",
