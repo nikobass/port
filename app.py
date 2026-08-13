@@ -1386,7 +1386,6 @@ cards = [
                 line-height: 1.45;
                 margin-top: 3px;
                 color: #e8e8e8;
-            ">
                 <span style="font-weight:600; color: #c9d4cd;">
                     {("+" if realized_pnl_total > 0 else "")}{money(realized_pnl_total)}
                 </span>
@@ -1429,7 +1428,6 @@ for col, card in zip(cols, cards):
                 flex-direction: column;
                 justify-content: flex-start;
                 box-sizing: border-box;
-            ">
                 <div style="
                     font-size: 10.5px;
                     line-height: 1.3;
@@ -1438,8 +1436,7 @@ for col, card in zip(cols, cards):
                     font-weight: 400;
                     letter-spacing: 0.04em;
                     text-transform: uppercase;
-                ">
-                    {card["label"]}
+                        {card["label"]}
                 </div>
                 <div style="
                     font-size: 26px;
@@ -1450,8 +1447,7 @@ for col, card in zip(cols, cards):
                     margin: 0;
                     padding: 0;
                     font-variant-numeric: tabular-nums;
-                ">
-                    {card["value"]}
+                        {card["value"]}
                 </div>
                 {card["detail_html"]}
             </div>
@@ -1685,6 +1681,36 @@ with tab_portefeuille:
         # et non selon son P&L. Une position importante reste donc une vraie card
         # même si son gain/perte actuel est faible.
         crypto_significant, crypto_small = split_significant_positions(crypto_show, "value_live")
+
+        # Bandeau NOCK : valorisation théorique d’un bag de 4,5 M de tokens
+        # au prix live NOCK en USD (mêmes sources / fallbacks que le dashboard).
+        nock_bag_qty = 4_500_000
+        nock_live_price = fetch_project_live_price("NOCK", "usd")
+        nock_bag_value = (nock_bag_qty * nock_live_price) if is_number(nock_live_price) else None
+        nock_bag_value_display = (
+            f"{float(nock_bag_value):,.0f} $" if is_number(nock_bag_value) else "—"
+        )
+
+        st.markdown(
+            f"""
+            <div style="
+                margin: 2px 0 10px 0;
+                padding: 10px 14px;
+                background: #050805;
+                border: 1px solid #1a2e22;
+                border-left: 3px solid #39ff8f;
+                border-radius: 0;
+                color: #e8e8e8;
+                font-size: 0.78rem;
+                line-height: 1.45;
+                font-family: 'JetBrains Mono', monospace;
+            ">
+                Avec mon bag de NOCK de 4.5M tokens, j'aurais actuellement
+                <span style="color:#39ff8f; font-weight:700;">{nock_bag_value_display}</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         if not crypto_significant.empty:
             st.markdown(
@@ -2123,8 +2149,7 @@ with tab_sales:
                     gap:10px;
                     margin: 7px 0;
                     max-width: 620px;
-                ">
-                    <div style="font-size:12px; font-weight:700; color:#e8e8e8; font-family:'JetBrains Mono', monospace;">{token}</div>
+                        <div style="font-size:12px; font-weight:700; color:#e8e8e8; font-family:'JetBrains Mono', monospace;">{token}</div>
                     <div style="height:4px; background:#1a2e22; border-radius:0; overflow:hidden;">
                         <div style="height:4px; width:{pct_val:.2f}%; background:#39ff8f; border-radius:0;"></div>
                     </div>
@@ -2142,16 +2167,14 @@ with tab_sales:
                     border: 1px solid #1a2e22;
                     border-radius: 0;
                     max-width: 700px;
-                ">
-                    <div style="
+                        <div style="
                         font-size: 10.5px;
                         font-weight: 400;
                         letter-spacing: 0.04em;
                         text-transform: uppercase;
                         color: #5a6f62;
                         margin-bottom: 10px;
-                    ">
-                        Contribution aux profits réalisés
+                                Contribution aux profits réalisés
                     </div>
                     {rows_html}
                 </div>
