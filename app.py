@@ -1756,7 +1756,7 @@ with tab_portefeuille:
                 <br>
                 Pour que mon bag actuel de FWA atteigne cette même valeur, le prix du FWA
                 devrait être de
-                <span style="color:#e8e8e8; font-weight:700;">{fwa_price_for_nock_equivalent_display}</span>.
+                <span style="color:#e8e8e8; font-weight:700;">{fwa_price_for_nock_equivalent_display}</span>
             </div>
             """,
             unsafe_allow_html=True,
