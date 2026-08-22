@@ -1696,6 +1696,27 @@ with tab_portefeuille:
             f"{float(nock_bag_value):,.0f} $" if is_number(nock_bag_value) else "—"
         )
 
+        # Prix que FWA doit atteindre pour que la position FWA actuelle vaille
+        # autant que le bag historique de 4.5M NOCK au cours actuel de NOCK.
+        fwa_position = positions_live[
+            positions_live["project"].astype(str).str.upper().str.strip() == "FWA"
+        ]
+        fwa_qty_current = (
+            float(fwa_position["qty_current"].sum()) if not fwa_position.empty else None
+        )
+        fwa_price_for_nock_equivalent = (
+            float(nock_bag_value) / fwa_qty_current
+            if is_number(nock_bag_value)
+            and is_number(fwa_qty_current)
+            and float(fwa_qty_current) > 0
+            else None
+        )
+        fwa_price_for_nock_equivalent_display = (
+            f"{fwa_price_for_nock_equivalent:,.7f} $"
+            if is_number(fwa_price_for_nock_equivalent)
+            else "—"
+        )
+
         if is_number(nock_bag_value):
             nock_vs_current_diff = float(nock_bag_value) - float(total_current_value)
             nock_vs_current_diff_abs_display = f"{abs(nock_vs_current_diff):,.0f} $"
@@ -1732,6 +1753,10 @@ with tab_portefeuille:
                 Si j'avais hold mon bag de NOCK de 4.5M tokens, j'aurais actuellement
                 <span style="color:#e8e8e8; font-weight:700;">{nock_bag_value_display}</span>
                 {nock_vs_current_html}
+                <br>
+                Pour que mon bag actuel de FWA atteigne cette même valeur, le prix du FWA
+                devrait être de
+                <span style="color:#e8e8e8; font-weight:700;">{fwa_price_for_nock_equivalent_display}</span>.
             </div>
             """,
             unsafe_allow_html=True,
